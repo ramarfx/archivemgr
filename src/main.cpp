@@ -10,6 +10,8 @@ void printUsage() {
     std::cout << "  archivemgr create [-o <archive.zip>] <file1> <file2> ...\n";
     std::cout << "  archivemgr list <archive.zip>\n";
     std::cout << "  archivemgr extract <archive.zip> [-o <output_dir>]\n";
+    std::cout << "  archivemgr find <archive.zip> <search_query>\n";
+    std::cout << "  archivemgr history\n";
 }
 
 int main(int argc, char* argv[]) {
@@ -31,7 +33,7 @@ int main(int argc, char* argv[]) {
         std::string archivePath = argv[2];
         std::vector<FileEntry> entries;
         listZipContents(archivePath, entries);
-
+ 
         printInfo("Archive contents:");
 
         std::sort(entries.begin(), entries.end(), [](const FileEntry& a, const FileEntry& b) {
@@ -112,6 +114,21 @@ int main(int argc, char* argv[]) {
 
         createZip(archivePath, files);
         recordHistory("Created archive " + archivePath + " with " + std::to_string(files.size()) + " files");
+
+    } else if (command == "history") {
+        showHistory();
+        recordHistory("Viewed history");
+
+    } else if (command == "find") {
+        if (argc < 4) {
+            std::cerr << "Archive file and search query required.\n";
+            printUsage();
+            return 1;
+        }
+        std::string archivePath = argv[2];
+        std::string query = argv[3];
+        findInZip(archivePath, query);
+        recordHistory("Searched for '" + query + "' in " + archivePath);
 
     } else {
         std::cerr << "Unknown command: " << command << "\n";

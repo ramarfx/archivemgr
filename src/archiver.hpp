@@ -21,6 +21,10 @@ namespace archiver {
             : name(n), size(s), isDir(d) {}
     };
 
+    inline void printSeparator() {
+        std::cout << "========================================\n";
+    }
+
     template <typename Container>
     void printCollection(const Container& c) {
         for (auto it = c.begin(); it != c.end(); ++it) {
@@ -41,6 +45,8 @@ namespace archiver {
     void createZip(const std::string& archivePath, const std::vector<std::string>& files);
 
     void recordHistory(const std::string& action);
+    void showHistory();
+    void findInZip(const std::string& archivePath, const std::string& query);
 
 }
 

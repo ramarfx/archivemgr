@@ -1,6 +1,7 @@
 #include "archiver.hpp"
 #include <fstream>
 #include <cstring>
+#include <algorithm>
 
 namespace archiver {
 
@@ -170,5 +171,44 @@ namespace archiver {
         if (log.is_open()) {
             log << action << "\n";
         }
+    }
+
+    void showHistory() {
+        std::ifstream log("history.log");
+        std::list<std::string> historyList;
+        std::string line;
+        while (std::getline(log, line)) {
+            historyList.push_back(line);
+        }
+        
+        printSeparator();
+        std::cout << "Operation History (from log file):\n";
+        printCollection(historyList);
+        printSeparator();
+    }
+
+    void findInZip(const std::string& archivePath, const std::string& query) {
+        std::vector<FileEntry> entries;
+        listZipContents(archivePath, entries);
+
+        // 1. Search/Find using std::find_if and Lambda
+        auto it = std::find_if(entries.begin(), entries.end(), [&query](const FileEntry& e) {
+            return e.name.find(query) != std::string::npos;
+        });
+
+        printSeparator();
+        if (it != entries.end()) {
+            std::cout << "Found matching entry:\n";
+            printInfo(*it); // Overloaded printInfo
+        } else {
+            std::cout << "No exact match found for query: " << query << "\n";
+        }
+
+        // 2. Count matches using std::count_if and Lambda
+        int matchCount = std::count_if(entries.begin(), entries.end(), [&query](const FileEntry& e) {
+            return e.name.find(query) != std::string::npos;
+        });
+        std::cout << "Total matching entries: " << matchCount << "\n";
+        printSeparator();
     }
 }
