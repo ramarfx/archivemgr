@@ -49,6 +49,9 @@ if(DEPLOY_BUILD)
     
     if(WIN32)
         target_link_libraries(archivemgr zip ws2_32)
+        set_target_properties(archivemgr PROPERTIES 
+            LINK_FLAGS "-static"
+        )
     else()
         target_link_libraries(archivemgr zip stdc++fs)
     endif()
