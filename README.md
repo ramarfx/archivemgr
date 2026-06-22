@@ -7,6 +7,7 @@ Recursive Archive Manager adalah aplikasi CLI sederhana yang menggunakan library
 2. **Recursive Extraction & Binary Header Detection**: Ekstraksi mampu mendeteksi file zip di dalam zip (*nested zip*) meskipun disamarkan dengan ekstensi palsu (seperti `.pdf` atau `.png`) menggunakan pembacaan *binary magic number* `PK\x03\x04`, lalu mengekstraknya secara rekursif.
 3. **Directory Zipping**: Mendukung kompresi sebuah folder beserta seluruh isi file dan sub-foldernya secara otomatis.
 4. **Flexible Output (`-o`)**: Opsi kustomisasi output letak direktori/file baik saat zipping (`create`) maupun unzipping (`extract`).
+5. **Password Protection & Encryption (`-p`)**: Mendukung pembuatan arsip terenkripsi (metode Traditional PKWARE) dan ekstraksi arsip ber-password menggunakan flag `-p`. File terenkripsi akan diberi tanda `(encrypted)` pada daftar isi ZIP.
 
 ## Konsep C++ yang Digunakan (Kriteria UAS) & Pemetaan Kode
 
@@ -56,11 +57,15 @@ Setelah dikompilasi, Anda bisa menjalankan perintah-perintah berikut:
 
 # Membuat arsip dengan nama khusus menggunakan flag -o
 ./archivemgr create -o arsip_saya.zip file1.txt file2.txt folder_anda
+
+# Membuat arsip dengan proteksi password menggunakan flag -p
+./archivemgr create -o arsip_terkunci.zip -p rahasia123 file1.txt
 ```
 
 **2. Melihat isi file ZIP (`list`)**
 ```bash
-./archivemgr list arsip_saya.zip
+# File terenkripsi akan secara otomatis ditandai dengan label (encrypted)
+./archivemgr list arsip_terkunci.zip
 ```
 
 **3. Mengekstrak file ZIP (`extract`)**
@@ -70,6 +75,9 @@ Setelah dikompilasi, Anda bisa menjalankan perintah-perintah berikut:
 
 # Mengekstrak ke folder tujuan khusus menggunakan flag -o
 ./archivemgr extract arsip_saya.zip -o folder_tujuan
+
+# Mengekstrak file ZIP ber-password menggunakan flag -p
+./archivemgr extract arsip_terkunci.zip -o folder_tujuan -p rahasia123
 ```
 
 *(Catatan: Setiap aktivitas akan dicatat otomatis ke dalam file `history.log` sebagai demonstrasi fungsionalitas File Handling).*
